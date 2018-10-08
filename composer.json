@@ -1,0 +1,41 @@
+{
+    "name": "origami/cart",
+    "description": "Cart handling package for Laravel projects",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Papertank",
+            "email": "hello@papertank.com"
+        }
+    ],
+    "require": {
+        "illuminate/support": "5.4.*|5.5.*|5.6.*",
+        "illuminate/session": "5.4.*|5.5.*|5.6.*",
+        "illuminate/events": "5.4.*|5.5.*|5.6.*",
+        "moneyphp/money": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Origami\\Cart\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Origami\\Cart\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1-dev"
+        },
+        "laravel": {
+            "providers": [
+                "Origami\\Cart\\CartServiceProvider"
+            ],
+            "aliases": {
+                "Cart": "Origami\\Cart\\Facades\\Cart"
+            }
+        }
+    },
+    "minimum-stability": "stable"
+}
