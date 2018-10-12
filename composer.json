@@ -9,9 +9,9 @@
         }
     ],
     "require": {
-        "illuminate/support": "~5.4.*",
-        "illuminate/session": "~5.4.*",
-        "illuminate/events": "~5.4.*",
+        "illuminate/support": "~5.4",
+        "illuminate/session": "~5.4",
+        "illuminate/events": "~5.4",
         "moneyphp/money": "^3.0"
     },
     "autoload": {
