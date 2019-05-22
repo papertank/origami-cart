@@ -30,21 +30,21 @@ class Cart implements Contracts\Cart
     protected $name;
 
     /**
-     * Cart items
+     * Cart items.
      *
      * @var ItemCollection
      */
     protected $items;
 
     /**
-     * Cart adjustments
+     * Cart adjustments.
      *
      * @var AdjustmentCollection
      */
     protected $adjustments;
 
     /**
-     * Currency
+     * Currency.
      *
      * @var Currency
      */
@@ -56,21 +56,22 @@ class Cart implements Contracts\Cart
     {
         $this->name = $name;
         $this->config = $config;
-        
-        $this->items = new ItemCollection;
-        $this->adjustments = new AdjustmentCollection;
+
+        $this->items = new ItemCollection();
+        $this->adjustments = new AdjustmentCollection();
         $this->setCurrency(new Currency($config['currency']));
     }
-    
+
     /**
      * Add an item to the cart.
      *
      * @param mixed     $id
-     * @param string     $name
+     * @param string    $name
      * @param int       $qty
-     * @param int|Money     $price
+     * @param int|Money $price
      * @param array     $options
      * @param array     $meta
+     *
      * @return \Origami\Cart\Items\Item
      */
     public function add($id, $name, $qty = null, $price = null, $options = [], $meta = [])
@@ -101,6 +102,7 @@ class Cart implements Contracts\Cart
      *
      * @param string $rowId
      * @param mixed  $value
+     *
      * @return \Origami\Cart\Items\Item
      */
     public function update($rowId, $value)
@@ -128,6 +130,7 @@ class Cart implements Contracts\Cart
 
         if ($item->qty <= 0) {
             $this->remove($item->rowId);
+
             return;
         } else {
             $this->items()->put($item->rowId, $item);
@@ -143,7 +146,6 @@ class Cart implements Contracts\Cart
      * Remove the cart item with the given rowId from the cart.
      *
      * @param string $rowId
-     * @return void
      */
     public function remove($rowId)
     {
@@ -160,6 +162,7 @@ class Cart implements Contracts\Cart
      * Get a cart item from the cart by its rowId.
      *
      * @param string $rowId
+     *
      * @return \Origami\Cart\Items\Item
      */
     public function get($rowId)
@@ -193,7 +196,7 @@ class Cart implements Contracts\Cart
      */
     public function content()
     {
-        if (! $this->loaded) {
+        if (!$this->loaded) {
             $this->load();
         }
 
@@ -294,6 +297,7 @@ class Cart implements Contracts\Cart
      * Search the cart content for a cart item matching the given search closure.
      *
      * @param \Closure $search
+     *
      * @return \Origami\Cart\Items\ItemCollection
      */
     public function search(Closure $search)
@@ -306,11 +310,10 @@ class Cart implements Contracts\Cart
      *
      * @param string $rowId
      * @param mixed  $model
-     * @return void
      */
     public function associate($rowId, $model)
     {
-        if (is_string($model) && ! class_exists($model)) {
+        if (is_string($model) && !class_exists($model)) {
             throw new UnknownModelException("The supplied model {$model} does not exist.");
         }
 
@@ -355,14 +358,15 @@ class Cart implements Contracts\Cart
 
     public function clearAdjustments()
     {
-        $this->adjustments = new AdjustmentCollection;
-        
+        $this->adjustments = new AdjustmentCollection();
+
         $this->save();
     }
 
     public function setCurrency(Currency $currency)
     {
         $this->currency = $currency;
+
         return $this;
     }
 
@@ -374,6 +378,7 @@ class Cart implements Contracts\Cart
     public function reload()
     {
         $this->loaded = false;
+
         return $this->load();
     }
 
@@ -381,6 +386,7 @@ class Cart implements Contracts\Cart
      * Magic method to make accessing the total, tax and subtotal properties possible.
      *
      * @param string $attribute
+     *
      * @return float|null
      */
     public function __get($attribute)
@@ -413,13 +419,14 @@ class Cart implements Contracts\Cart
      * @param float     $price
      * @param array     $options
      * @param array     $meta
+     *
      * @return \Origami\Cart\Items\Item
      */
     protected function createItem($id, $name, $qty, $price, array $options, array $meta)
     {
         if ($id instanceof Buyable) {
-            $item = Item::fromBuyable($id, $qty ? : []);
-            $item->setQuantity($name ? : 1);
+            $item = Item::fromBuyable($id, $qty ?: []);
+            $item->setQuantity($name ?: 1);
             $item->associate($id);
             if ($price) {
                 $item->setMeta($price);
@@ -432,10 +439,12 @@ class Cart implements Contracts\Cart
             $item->setQuantity($qty);
         }
 
-        $item->setTaxRate(config('cart.tax'));
+        if ($tax = config('cart.tax')) {
+            $item->setTaxRate($tax);
+        }
 
         if (!$item->hasCurrency($this->currency)) {
-            throw new InvalidCurrencyException('You cannot add ' . $item->getCurrency()->getCode() . ' currency to this cart instance');
+            throw new InvalidCurrencyException('You cannot add '.$item->getCurrency()->getCode().' currency to this cart instance');
         }
 
         return $item;
@@ -445,6 +454,7 @@ class Cart implements Contracts\Cart
      * Check if the item is a multidimensional array or an array of Buyables.
      *
      * @param mixed $item
+     *
      * @return bool
      */
     protected function isMulti($item)
